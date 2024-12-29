@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 @Slf4j
 @Service
 public class GeminiService {
@@ -15,14 +18,19 @@ public class GeminiService {
     @Value("${gemini.api.key}")
     private String geminiApiKey;
 
-    private final OkHttpClient client = new OkHttpClient();
+    //private final OkHttpClient client = new OkHttpClient();
+// Create a custom OkHttpClient with increased timeouts
+    private final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(60, TimeUnit.SECONDS)    // Connection timeout
+            .readTimeout(60, TimeUnit.SECONDS)       // Read timeout
+            .writeTimeout(60, TimeUnit.SECONDS)      // Write timeout
+            .build();
 
-
-    public String generateReadme(String repoInfo) {
+    public String generateReadme(String repoInfo, Map<String, String> options) {
         WebClient webClient = WebClient.builder()
                 .build();
 
-        String prompt = generatePrompt(repoInfo);
+        String prompt = generatePrompt(repoInfo, options);
 
         // Create the JSON body
         //log.info(jsonBody.toString());
@@ -67,21 +75,44 @@ public class GeminiService {
 
         } catch (Exception e) {
             // Exception handling
-            return "Error generating markdown.";
+            return "Error generating markdown. " + e;
         }
     }
 
 
 
-    public String generatePrompt(String repoInfo) {
+    public String generatePrompt(String repoInfo, Map<String, String> options) {
 
         StringBuilder prompt = new StringBuilder();
+
+        // Add dynamic options
+        if (options.containsKey("language")) {
+            prompt.append("I will give you some instructions in English and I want your response in ")
+                    .append(options.get("language"))
+                    .append(". ");
+        }
+
+        if (options.containsKey("tone")) {
+            prompt.append("Tone you should use is ")
+                    .append(options.get("tone"))
+                    .append(". ");
+        }
+
+
+
 
         prompt.append("You are a technical documentation expert. " +
                 "Analyze the provided GitHub repository and generate a high-quality, " +
                 "professional and comprehensive README.md file that will help developers understand and work with this project. " +
-                "The README must include a centered project title and brief description " +
-                "followed by relevant badges sourced from valid platforms but do not add license badge if license is not available in repository. " +
+                "The README must include a centered project title and brief description ");
+
+        // Add badges if requested
+        if (options.containsKey("badges") && Boolean.parseBoolean(options.get("badges"))) {
+            prompt.append("Include relevant badges from valid platforms. ");
+        }
+
+        prompt.append(
+                "Do not add license badge or license section if license is not provided in repository. " +
                 "Write a concise project description introducing the repository's " +
                 "purpose and functionality, followed by an " +
                 "engaging overview of its main features. " +
@@ -125,14 +156,19 @@ public class GeminiService {
                     .getJSONObject("content") // Access content
                     .getJSONArray("parts"); // Get the parts
 
-            StringBuilder questions = new StringBuilder();
+            StringBuilder markdown = new StringBuilder();
             for (int i = 0; i < parts.length(); i++) {
-                questions.append(parts.getJSONObject(i).getString("text")).append("\n");
+                markdown.append(parts.getJSONObject(i).getString("text")).append("\n");
             }
 
-            return questions.toString();
+            // Remove ```markdown at the start and ``` at the end
+            String cleanedMarkdown = markdown.toString()
+                    .replaceFirst("^```markdown\\s*", "") // Remove the starting ```markdown
+                    .replaceFirst("\\s*```\\s*$", "");    // Remove the ending ```
+
+            return cleanedMarkdown;
         } else {
-            return "No interview questions were generated.";
+            return "No markdown were generated.";
         }
     }
 
