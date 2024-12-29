@@ -42,6 +42,15 @@ const InputContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 2px;
+  padding: 20px;
+  border-radius: 12px;
+`;
+
+const Download = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-bottom: 20px;
   padding: 20px;
   border-radius: 12px;
@@ -133,7 +142,7 @@ const ExampleButton = styled.button`
   padding: 10px 15px;
   background-color: white;
   color: black;
-  font-size: 1em;
+  font-size: 0.7em;
   font-weight: bold;
   border: 2px solid #000000;
   border-bottom: 8px solid #000000;
@@ -212,6 +221,16 @@ function App() {
   const [tone, setTone] = useState("Neutral"); // Default tone
   const [badges, setBadges] = useState(true); // State for badges
 
+  // Function to trigger file download
+  const downloadFile = () => {
+    const blob = new Blob([generatedReadme], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "README.md"; // File name for the download
+    link.click();
+    URL.revokeObjectURL(url); // Clean up the URL object after download
+  };
 
   const loadingMessages = [
     "Checking if it's cached...",
@@ -308,8 +327,10 @@ function App() {
           <Button onClick={handleGenerateReadme} disabled={loading}>
             {loading ? "generating" : "generate readme"}
           </Button>
+
+
         </InputContainer>
-        <div style={{color:"white"}}>try these repositories:</div>
+        <div style={{color: "white"}}>try these repositories:</div>
         <ExampleRepos>
           {exampleUrls.map((url, index) => (
               <ExampleButton key={index} onClick={() => setGithubUrl(url)}>
@@ -320,6 +341,7 @@ function App() {
 
 
         {/* Customize Response Section */}
+        <div style={{marginTop:"20px", color: "white"}}>customize:</div>
         <DropdownContainer>
           <DropdownLabel>
             <span>Language:</span>
@@ -338,7 +360,7 @@ function App() {
           </DropdownLabel>
 
           <DropdownLabel>
-          <span>Tone:</span>
+            <span>Tone:</span>
             <Dropdown
                 id="tone"
                 value={tone}
@@ -352,22 +374,21 @@ function App() {
           <CheckboxContainer>
             <CheckboxLabel>
               <span>Badges:</span>
-            <input
-                type="checkbox"
-                checked={badges}
-                onChange={(e) => setBadges(e.target.checked)}
-            />
+              <input
+                  type="checkbox"
+                  checked={badges}
+                  onChange={(e) => setBadges(e.target.checked)}
+              />
             </CheckboxLabel>
           </CheckboxContainer>
         </DropdownContainer>
-
 
 
         {/* Loading message animation */}
         {loading && (
             <LoadingContainer>
               <div>{loadingMessages[loadingMessageIndex]}</div>
-              <LoadingIcon /> {/* Add the spinning loader */}
+              <LoadingIcon/> {/* Add the spinning loader */}
             </LoadingContainer>
         )}
 
@@ -380,7 +401,7 @@ function App() {
                     value={generatedReadme}
                     onChange={(newValue) => setGeneratedReadme(newValue)}
                     name="markdown-editor"
-                    editorProps={{ $blockScrolling: true }}
+                    editorProps={{$blockScrolling: true}}
                     width="100%"
                     height="100%"
                 />
@@ -392,8 +413,14 @@ function App() {
                 </ReactMarkdown>
               </MarkdownPreview>
             </MarkdownContainer>
-        )}
 
+        )}
+        <Download>
+          {/* Add a button to download the generated README.md file */}
+          {generatedReadme && (
+              <Button onClick={downloadFile}>download README.md</Button>
+          )}
+        </Download>
         {/* Footer */}
         <Footer>
           <p>reporead by cankurttekin</p>
