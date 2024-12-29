@@ -14,7 +14,7 @@ import java.util.Arrays;
 @Configuration
 public class CorsConfig {
 
-    @Value("${ALLOWED_ORIGINS:http://localhost:3000}")
+    @Value("${ALLOWED_ORIGINS:http://localhost:3000,https://reporead.vercel.app/}")
     private String allowedOrigins;
 
     @Bean

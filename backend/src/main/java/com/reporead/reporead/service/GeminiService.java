@@ -35,8 +35,8 @@ public class GeminiService {
         // Create the JSON body
         //log.info(jsonBody.toString());
         String uri = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + geminiApiKey;
-        log.info(geminiApiKey);
-        log.info(uri);
+        //log.info(geminiApiKey);
+        //log.info(uri);
 
         try {
             // Create the JSON body

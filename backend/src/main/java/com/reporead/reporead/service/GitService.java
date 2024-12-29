@@ -64,11 +64,9 @@ public class GitService {
 
     public void processRepositoryTree(String githubUrl) {
         String response = fetchRepositoryTree(githubUrl);
+        log.info("Repository tree {}", response);
 
-        // Parse and handle the JSON response as needed (e.g., extract files, summaries, etc.)
-        System.out.println("Repository Tree: " + response);
-
-        // Add custom logic here for processing the response
+        // REFACTOR THIS METHOD TO ADD custom logic later
     }
 
     /**

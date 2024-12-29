@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled, { keyframes } from "styled-components"; // Import keyframes for animations
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
@@ -274,7 +274,7 @@ function App() {
     try {
       // Call the backend API to generate the README
       const response = await axios.post(
-          "http://localhost:8080/api/generate-readme",
+          "http://13.60.105.133:8080/api/generate-readme",
           {
             repoUrl: githubUrl,
             language,
