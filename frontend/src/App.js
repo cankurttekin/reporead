@@ -274,7 +274,7 @@ function App() {
     try {
       // Call the backend API to generate the README
       const response = await axios.post(
-          "http://13.60.105.133:8080/api/generate-readme",
+          "https://backend-reporead.kurttekin.com:8443/api/generate-readme",
           {
             repoUrl: githubUrl,
             language,
