@@ -7,6 +7,8 @@ import remarkGfm from "remark-gfm"; // GitHub Flavored Markdown for tables, task
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-markdown";
 import "ace-builds/src-noconflict/theme-github"; // GitHub theme for Ace Editor
+import GlobalStyles from "./styles/GlobalStyles";
+import buyMeACoffeeImage from './assets/buy-me-a-beer.png'
 
 // Styled components for layout
 const Container = styled.div`
@@ -205,7 +207,7 @@ const MarkdownPreview = styled.div`
 
 const Footer = styled.footer`
   font-size: 0.9em;
-  color: darkorange;
+  color: whitesmoke;
   padding: 2px 0;
   text-align: center;
   margin-top: auto; /* Push footer to the bottom */
@@ -313,9 +315,11 @@ function App() {
   };
 
   return (
+      <>
+        <GlobalStyles />
       <Container>
-        <Title>repository to README</Title>
-        <SubTitle>generate README markdowns for any github repository.</SubTitle>
+        <Title>REPOREAD</Title>
+        <SubTitle>Create a README.md for any GitHub repository in just seconds</SubTitle>
 
         <InputContainer>
           <TextInput
@@ -325,12 +329,12 @@ function App() {
               placeholder="Enter GitHub repository URL"
           />
           <Button onClick={handleGenerateReadme} disabled={loading}>
-            {loading ? "generating" : "generate readme"}
+            {loading ? "generating" : "README.md"}
           </Button>
 
 
         </InputContainer>
-        <div style={{color: "white"}}>try these repositories:</div>
+        <div style={{color: "white"}}>Try these repositories:</div>
         <ExampleRepos>
           {exampleUrls.map((url, index) => (
               <ExampleButton key={index} onClick={() => setGithubUrl(url)}>
@@ -341,7 +345,7 @@ function App() {
 
 
         {/* Customize Response Section */}
-        <div style={{marginTop:"20px", color: "white"}}>customize:</div>
+        <div style={{marginTop:"20px", color: "white"}}>Customize:</div>
         <DropdownContainer>
           <DropdownLabel>
             <span>Language:</span>
@@ -423,9 +427,22 @@ function App() {
         </Download>
         {/* Footer */}
         <Footer>
+          <div className="support-container">
+            <a href="https://www.buymeacoffee.com/cankurttekin" target="_blank" rel="noopener noreferrer">
+              <img
+                  src={buyMeACoffeeImage}
+                  alt="Buy Me a Coffee"
+                  style={{height: '60px', width: 'auto'}}
+              />
+            </a>
+            <p style={{maxWidth: '600px', margin: 0}}>
+            </p>
+          </div>
+
           <p>reporead by cankurttekin</p>
         </Footer>
       </Container>
+      </>
   );
 }
 
