@@ -31,7 +31,7 @@ public class ReadmeController {
         try {
             // Get repo tree from GitService
             String repoDetails = gitService.fetchRepositoryTree(request.getRepoUrl());
-            log.info("Repo Details: {}", repoDetails);
+            //log.info("Repo Details: {}", repoDetails);
 
             // Prepare options map
             Map<String, String> options = new HashMap<>();
@@ -47,10 +47,11 @@ public class ReadmeController {
 
             // Call Gemini API with return info
             String readmeMarkdown = geminiService.generateReadme(repoDetails, options);
-            log.info("Generated README Markdown: {}", readmeMarkdown);
+            //log.info("Generated README Markdown: {}", readmeMarkdown);
 
 
-            // Step 3: Return the generated markdown
+            log.info("Generated README for repo: {}, user: {}", request.getRepoUrl(), gitService.extractUsernameFromUrl(request.getRepoUrl()));
+            // Return the generated markdown
             return ResponseEntity.ok(readmeMarkdown);
 
         } catch (Exception e) {

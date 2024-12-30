@@ -18,25 +18,20 @@ public class GeminiService {
     @Value("${gemini.api.key}")
     private String geminiApiKey;
 
+    private final String geminiApiBaseUrlV2 = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=";
+    //private final String geminiApiBaseUrlV15 = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=";
+
     //private final OkHttpClient client = new OkHttpClient();
-// Create a custom OkHttpClient with increased timeouts
+    // Custom OkHttpClient with increased timeouts
     private final OkHttpClient client = new OkHttpClient.Builder()
-            .connectTimeout(60, TimeUnit.SECONDS)    // Connection timeout
-            .readTimeout(60, TimeUnit.SECONDS)       // Read timeout
-            .writeTimeout(60, TimeUnit.SECONDS)      // Write timeout
+            .connectTimeout(90, TimeUnit.SECONDS)
+            .readTimeout(90, TimeUnit.SECONDS)
+            .writeTimeout(90, TimeUnit.SECONDS)
             .build();
 
     public String generateReadme(String repoInfo, Map<String, String> options) {
-        WebClient webClient = WebClient.builder()
-                .build();
-
         String prompt = generatePrompt(repoInfo, options);
-
-        // Create the JSON body
-        //log.info(jsonBody.toString());
-        String uri = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + geminiApiKey;
-        //log.info(geminiApiKey);
-        //log.info(uri);
+        log.info("Generated prompt with options {}", options);
 
         try {
             // Create the JSON body
@@ -55,34 +50,31 @@ public class GeminiService {
             // Build the request
             Request request = new Request.Builder()
                     //.url("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + geminiApiKey)
-                    .url("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=" + geminiApiKey)
+                    .url(geminiApiBaseUrlV2 + geminiApiKey)
                     .post(body)
                     .addHeader("Content-Type", "application/json")
                     .build();
 
             // Execute the request
             Response response = client.newCall(request).execute();
+            log.info("Gemini API Request");
 
             // Log the response body
             String responseBody = response.body().string();
-            System.out.println("Gemini API Response: " + responseBody); // Log the full response
+            //System.out.println("Gemini API Response: " + responseBody);
 
-            // Parse the response to extract the questions
+            // Parse the response to extract readme
             JSONObject responseJson = new JSONObject(responseBody);
 
-            String contents = parseResponse(responseJson);
-            return contents;
+            return parseResponse(responseJson);
 
         } catch (Exception e) {
-            // Exception handling
+            log.error(e.getMessage());
             return "Error generating markdown. " + e;
         }
     }
 
-
-
     public String generatePrompt(String repoInfo, Map<String, String> options) {
-
         StringBuilder prompt = new StringBuilder();
 
         // Add dynamic options
@@ -145,7 +137,6 @@ public class GeminiService {
                 "without any additional commentary. ");
 
         prompt.append(repoInfo);
-
         return prompt.toString();
     }
 
@@ -208,33 +199,4 @@ public class GeminiService {
 
         return jsonBody;
     }
-
-
 }
-
-/*
-API_KEY="YOUR_API_KEY"
-
-curl \
-  -X POST https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY} \
-  -H 'Content-Type: application/json' \
-  -d @<(echo '{
-  "contents": [
-    {
-      "role": "user",
-      "parts": [
-        {
-          "text": "INSERT_INPUT_HERE"
-        }
-      ]
-    }
-  ],
-  "generationConfig": {
-    "temperature": 1,
-    "topK": 40,
-    "topP": 0.95,
-    "maxOutputTokens": 8192,
-    "responseMimeType": "text/plain"
-  }
-}')
- */

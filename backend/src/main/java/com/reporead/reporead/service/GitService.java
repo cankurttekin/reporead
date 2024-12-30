@@ -11,12 +11,6 @@ import reactor.core.publisher.Mono;
 public class GitService {
     // GET https://uithub.com/{owner}/{repo}/tree/{branch}/{path}
 
-    //private static final String UITHUB_API_BASE = "https://uithub.com";
-
-    // I may implement it later but rn api does not require
-    // private static final String API_KEY = "your-api-key";
-
-
     public String fetchRepositoryTree(String githubUrl) {
         // Transforming GitHub URL to UIThub URL
         if (!githubUrl.startsWith("https://github.com/") || githubUrl.startsWith("github.com/")) {
@@ -24,9 +18,11 @@ public class GitService {
         }
 
         String username = extractUsernameFromUrl(githubUrl);
+        log.info("Fetching repository tree for GitHub user: {}", username);
+
         githubUrl = githubUrl.replaceFirst("g", "u");
 
-        log.info("Fetching repository tree for {}", githubUrl);
+        //log.info("Fetching repository tree for {}", githubUrl);
 
         WebClient webClient = WebClient.builder()
                 .defaultHeader("Accept", "text/plain")
@@ -46,7 +42,7 @@ public class GitService {
             // Prepend the username to the response
             String finalResponse = "Github Username: " + username + "\n" + result;
 
-            log.info("Fetched repository tree for {} {}", githubUrl, finalResponse);
+            log.info("Fetched repository tree for: {}",username);
             return finalResponse;
 
 
@@ -64,7 +60,7 @@ public class GitService {
 
     public void processRepositoryTree(String githubUrl) {
         String response = fetchRepositoryTree(githubUrl);
-        log.info("Repository tree {}", response);
+        //log.info("Repository tree {}", response);
 
         // REFACTOR THIS METHOD TO ADD custom logic later
     }
@@ -75,7 +71,7 @@ public class GitService {
      * @param githubUrl GitHub URL (e.g., https://github.com/{owner}/{repo}/...)
      * @return The username (owner) part of the URL.
      */
-    private String extractUsernameFromUrl(String githubUrl) {
+    public static String extractUsernameFromUrl(String githubUrl) {
         // Strip the "https://github.com/" part of the URL and split by "/"
         String[] parts = githubUrl.replace("https://github.com/", "").split("/");
         if (parts.length >= 2) {

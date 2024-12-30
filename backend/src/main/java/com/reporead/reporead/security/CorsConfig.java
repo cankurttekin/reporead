@@ -14,7 +14,7 @@ import java.util.Arrays;
 @Configuration
 public class CorsConfig {
 
-    @Value("${ALLOWED_ORIGINS:http://localhost:3000,https://reporead.vercel.app/}")
+    @Value("${ALLOWED_ORIGINS:http://localhost:3000,https://reporead.vercel.app/,https://reporead.vercel.app}")
     private String allowedOrigins;
 
     @Bean
@@ -27,7 +27,7 @@ public class CorsConfig {
 
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        //configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("https://reporead.vercel.app");
         //configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "${ALLOWED_ORIGINS}"));
         configuration.setAllowedOrigins(Arrays.asList(allowedOrigins.split(","))); // Split the allowed origins
         configuration.setAllowCredentials(true);
