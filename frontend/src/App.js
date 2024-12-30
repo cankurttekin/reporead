@@ -422,7 +422,7 @@ function App() {
         <Download>
           {/* Add a button to download the generated README.md file */}
           {generatedReadme && (
-              <Button onClick={downloadFile}>download README.md</Button>
+              <Button onClick={downloadFile}>Download README.md</Button>
           )}
         </Download>
         {/* Footer */}
