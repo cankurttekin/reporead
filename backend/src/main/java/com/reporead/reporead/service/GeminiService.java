@@ -6,7 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -77,66 +76,42 @@ public class GeminiService {
     public String generatePrompt(String repoInfo, Map<String, String> options) {
         StringBuilder prompt = new StringBuilder();
 
-        // Add dynamic options
+        // Language
         if (options.containsKey("language")) {
-            prompt.append("I will give you some instructions in English and I want your response in ")
-                    .append(options.get("language"))
-                    .append(". ");
+            prompt.append("Generate the response in ").append(options.get("language")).append(". ");
         }
 
+        // Tone
         if (options.containsKey("tone")) {
-            prompt.append("Tone you should use is ")
-                    .append(options.get("tone"))
-                    .append(". ");
+            prompt.append("Use a ").append(options.get("tone")).append(" tone. ");
         }
 
+        prompt.append("Generate a comprehensive README.md file for the given GitHub repository information. ");
 
-
-
-        prompt.append("You are a technical documentation expert. " +
-                "Analyze the provided GitHub repository and generate a high-quality, " +
-                "professional and comprehensive README.md file that will help developers understand and work with this project. " +
-                "The README must include a centered project title and brief description ");
-
-        // Add badges if requested
+        // Badges
         if (options.containsKey("badges") && Boolean.parseBoolean(options.get("badges"))) {
             prompt.append("Include relevant badges from valid platforms. ");
         }
 
-        prompt.append(
-                "Do not add license badge or license section if license is not provided in repository. " +
-                "Write a concise project description introducing the repository's " +
-                "purpose and functionality, followed by an " +
-                "engaging overview of its main features. " +
-                "Include a well-structured, clickable table of contents to aid navigation. " +
-                "Provide detailed and accurate instructions for installation and setup, " +
-                "specifying where environment variables (if any) " +
-                "should be placed and their required formats. " +
-                "If no environment variables are needed, " +
-                "omit this section entirely. " +
-                "Clearly explain how to run the project with examples " +
-                "of commands or configurations when applicable. " +
-                "List and describe all major dependencies " +
-                "and tools required for the project. " +
-                "Include a contribution guide explaining " +
-                "how developers can participate, " +
-                "along with inferred or placeholder License information (do not add any License if not found in the repository codebase). " +
-                //"Add a contact section with placeholder details for maintainers or contributors. " +
-                "Format the README visually and structurally using appropriate Markdown elements, " +
-                "such as headings, subheadings, bullet points, and code blocks, " +
-                "ensuring the output is aesthetically pleasing and optimized for readability. " +
-                "Ensure all information is accurate and non-fabricated, " +
-                "based solely on the repository's structure and content. " +
-                "If there are scripts in package.json or requirements.txt, explain their purposes " +
-                "If there are configuration files, explain their options " +
-                "Keep the tone professional but friendly. " +
-                "If there are API endpoints in codebase, generate api reference section with endpoints that are placed in table with parameters, description and type " +
-                "If a README is already present, " +
-                "extract and adapt relevant details without copying or mimicking " +
-                "its content directly. Deliver the output strictly in valid Markdown format " +
-                "without any additional commentary. ");
+        prompt.append("The README must include: \n");
+        prompt.append("   - A project title and brief description.\n");
+        prompt.append("   - A concise project description of the repository's purpose and main features.\n");
+        prompt.append("   - A well-structured, clickable table of contents. \n");
+        prompt.append("   - Detailed installation and setup instructions (include environment variable locations/formats, if any. Omit this if none exist.).\n");
+        prompt.append("   - Clear instructions on how to run the project with examples of commands or configurations etc., if applicable.\n");
+        prompt.append("   - A list and description of major dependencies and tools required for the project.\n");
+        prompt.append("   - A contribution guide. \n");
+        prompt.append("   - Inferred or placeholder License information (do not include any license if license is not already present in the repository).\n");
+        prompt.append("   - An explanation of the purpose of the scripts in package.json and the files in requirements.txt.\n");
+        prompt.append("   - An explanation of options in configuration files.\n");
+        prompt.append("  If there are API endpoints in codebase, generate an API reference section with endpoints in a table (with parameters, description, and types). \n");
+        prompt.append("If a README is present, extract and adapt relevant details. ");
+        prompt.append("Format using markdown elements (headings, bullets, code blocks). Do not include additional commentary. Ensure information is accurate. Do not fabricate. Stick solely on the repository's structure and content. \n");
 
+        prompt.append("Output strictly in valid Markdown format. ");
+        prompt.append("Repository Information:\n");
         prompt.append(repoInfo);
+
         return prompt.toString();
     }
 
