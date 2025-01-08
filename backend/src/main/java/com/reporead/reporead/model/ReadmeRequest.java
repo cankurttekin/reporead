@@ -10,6 +10,5 @@ public class ReadmeRequest {
     private String tone;
     private String language;
     private Boolean badges;
-
 }
 

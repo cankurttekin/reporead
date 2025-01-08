@@ -25,7 +25,8 @@ public class CorsConfig {
         // Log the allowed origins
         log.info("Allowed Origins: {}", allowedOrigins);
 
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        //configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.addAllowedHeader("*");
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.addAllowedOrigin("https://reporead.vercel.app");
         //configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "${ALLOWED_ORIGINS}"));
