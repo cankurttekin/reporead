@@ -16,7 +16,7 @@ const Container = styled.div`
   color: #1f2328;
   text-align: center;
   background-color: #212d63;
-  min-height: 100vh; /* Ensure it fills the viewport height */
+  min-height: 100vh; 
   display: flex;
   flex-direction: column; /* Stack items vertically */
   justify-content: flex-start; /* Start at the top */
@@ -239,13 +239,9 @@ function App() {
     "Gathering info about repository...",
     "Analyzing repository...",
     "Generating prompt for you <3",
-    "Prompting Gemini to do its job...",
-    "F, this takes too long...",
-    "Prompt engineers needed: dm me on linkedin/in/cankurttekin",
-    "Harder, Better, Faster, Stronger",
-    "K I am gonna give you your damn markdown, relax aq...",
-    "Guess not Im not in the mood rn...",
-    "Wait, wait I'm coming.."
+    "Prompting...",
+    "This takes too long...",
+    "Waiting for a response from LLM..."
   ];
 
   // Handle user input for GitHub URL
@@ -392,7 +388,7 @@ function App() {
         {loading && (
             <LoadingContainer>
               <div>{loadingMessages[loadingMessageIndex]}</div>
-              <LoadingIcon/> {/* Add the spinning loader */}
+              <LoadingIcon/> {/* Spinning loader */}
             </LoadingContainer>
         )}
 
